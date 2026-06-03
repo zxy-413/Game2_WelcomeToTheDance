@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- 自动获取Player Settings里的Product Name -->
+    <title>WelcomeToTheDance</title>
+    
+    <!-- 引入像素风字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+      /* 全局基础设置 */
+      body {
+        background-color: #1a1a1a; /* 复古暗色背景 */
+        color: #e0e0e0;
+        font-family: 'Press Start 2P', monospace; /* 应用像素字体 */
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh; /* 确保内容垂直居中 */
+      }
+
+      /* 游戏名称区域（上方） */
+      .header {
+        margin-bottom: 35px; /* 稍微增加一点与游戏的间距 */
+      }
+
+      h1 {
+        font-size: 40px; /* 【修改这里】字体改大了（原为28px） */
+        color: #ffcc00; 
+        text-shadow: 5px 5px 0px #000; /* 阴影也稍微加厚一点配合大字体 */
+        margin: 0;
+        letter-spacing: 2px;
+      }
+
+      /* 游戏容器，严格锁定Unity传入的宽高 */
+      #game-container {
+        position: relative;
+        width: 960px;
+        height: 540px;
+        background-color: #000;
+        border: 4px solid #fff; 
+        box-shadow: 8px 8px 0px #000; 
+      }
+
+      /* Canvas 严格锁定尺寸，不让其拉伸变形 */
+      canvas {
+        display: block;
+        width: 960px !important;
+        height: 540px !important;
+        image-rendering: pixelated; 
+      }
+
+      /* 制作者介绍区域（下方） */
+      .footer {
+        margin-top: 45px; /* 稍微增加一点与游戏的间距 */
+        font-size: 16px; /* 【修改这里】字体改大了（原为12px） */
+        color: #aaaaaa;
+        line-height: 2.2; /* 增加一点行距让大字不拥挤 */
+        text-shadow: 2px 2px 0px #000;
+      }
+
+      .footer span.maker {
+        color: #44aaff; 
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 游戏上方：游戏名 -->
+    <div class="header">
+      <h1>WelcomeToTheDance</h1>
+    </div>
+
+    <!-- 游戏中间：固定分辨率的画布 -->
+    <div id="game-container">
+      <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+    </div>
+
+    <!-- 游戏下方：制作者介绍 -->
+    <div class="footer">
+      <div>DEVELOPED BY <span class="maker">DefaultCompany</span></div>
+      <div>v1.0</div>
+    </div>
+
+    <!-- Unity WebGL 启动脚本 (兼容 Unity 2020+) -->
+    <script src="Build/Web.loader.js"></script>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var buildUrl = "Build";
+      var config = {
+        dataUrl: buildUrl + "/Web.data",
+        frameworkUrl: buildUrl + "/Web.framework.js",
+        codeUrl: buildUrl + "/Web.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "WelcomeToTheDance",
+        productVersion: "1.0",
+      };
+
+      var script = document.createElement("script");
+      script.src = config.frameworkUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+        }).then((unityInstance) => {
+          console.log("Game loaded successfully!");
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
