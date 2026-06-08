@@ -1,118 +1,779 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!-- 自动获取Player Settings里的Product Name -->
-    <title>WelcomeToTheDance</title>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>WelcomeToTheDance - 假面舞会</title>
+  
+  <!-- 像素风字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 全局重置 & 复古氛围 */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d0f14;
+      color: #e0e0e0;
+      font-family: 'Press Start 2P', monospace;
+      text-align: center;
+      margin: 0;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* 全屏模式下的 body 调整 */
+    body:-webkit-full-screen {
+      background-color: #000;
+      padding: 0;
+    }
+    body:fullscreen {
+      background-color: #000;
+      padding: 0;
+    }
+
+    /* 主内容区域 */
+    .main-layout {
+      max-width: 1400px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 全屏模式下主布局调整 */
+    :-webkit-full-screen .main-layout {
+      max-width: none;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+    }
+    :fullscreen .main-layout {
+      max-width: none;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+    }
+
+    /* 头部区域：游戏名称 + 双语切换按钮 */
+    .header {
+      margin-bottom: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    /* 全屏模式下隐藏头部（可选，保持简洁） */
+    :-webkit-full-screen .header {
+      display: none;
+    }
+    :fullscreen .header {
+      display: none;
+    }
+
+    h1 {
+      font-size: 40px;
+      color: #ffcc00;
+      text-shadow: 5px 5px 0px #000;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+
+    /* 双语切换按钮组 */
+    .lang-switch {
+      display: flex;
+      gap: 10px;
+      background: #1e1e2c;
+      padding: 6px 12px;
+      border: 2px solid #ffcc33;
+      box-shadow: 4px 4px 0px #00000055;
+    }
+
+    .lang-btn {
+      background: #2a2a38;
+      border: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      padding: 8px 16px;
+      color: #cccccc;
+      cursor: pointer;
+      transition: all 0.1s;
+      letter-spacing: 1px;
+    }
+
+    .lang-btn.active {
+      background: #ffcc33;
+      color: #1e1e2c;
+      text-shadow: none;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: #3c3c50;
+      color: #ffdd77;
+    }
+
+    /* 游戏 + 说明板块 整体行布局 */
+    .game-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    /* 全屏模式下游戏行布局 */
+    :-webkit-full-screen .game-row {
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    :fullscreen .game-row {
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    /* 游戏容器包装器 */
+    .game-wrapper {
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* 全屏模式下游戏包装器 */
+    :-webkit-full-screen .game-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    :fullscreen .game-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #game-container {
+      position: relative;
+      width: 960px;
+      height: 540px;
+      background-color: #000;
+      border: 4px solid #ffffff;
+      box-shadow: 12px 12px 0px rgba(0,0,0,0.5);
+    }
+
+    /* 全屏模式下游戏容器 */
+    :-webkit-full-screen #game-container {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      box-shadow: none;
+    }
+    :fullscreen #game-container {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      box-shadow: none;
+    }
+
+    canvas {
+      display: block;
+      width: 960px !important;
+      height: 540px !important;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+
+    /* 全屏模式下 canvas 拉伸填满 */
+    :-webkit-full-screen canvas {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+      background-color: #000;
+    }
+    :fullscreen canvas {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+      background-color: #000;
+    }
+
+    /* 全屏按钮 - 位于游戏容器右上角 */
+    .fullscreen-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 100;
+      background: #1e1e2c;
+      border: 2px solid #ffcc33;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      padding: 8px 12px;
+      color: #ffcc33;
+      cursor: pointer;
+      transition: all 0.1s;
+      box-shadow: 3px 3px 0px #00000077;
+      backdrop-filter: blur(4px);
+    }
+
+    .fullscreen-btn:hover {
+      background: #ffcc33;
+      color: #1e1e2c;
+      transform: scale(1.02);
+    }
+
+    /* 全屏模式下全屏按钮可能变化位置 */
+    :-webkit-full-screen .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    :fullscreen .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+
+    /* 右侧说明板块 - 像素风卡片 */
+    .info-panel {
+      width: 380px;
+      background-color: #1e1e2c;
+      border: 4px solid #e0e0e0;
+      box-shadow: 8px 8px 0px #00000055;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 全屏模式下右侧面板隐藏 */
+    :-webkit-full-screen .info-panel {
+      display: none;
+    }
+    :fullscreen .info-panel {
+      display: none;
+    }
+
+    /* 选项卡按钮区域 */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #ffcc33;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: #2a2a38;
+      border: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      padding: 12px 0;
+      color: #cccccc;
+      cursor: pointer;
+      transition: all 0.1s;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .tab-btn:first-child {
+      border-right: 1px solid #3e3e52;
+    }
+
+    .tab-btn.active {
+      background: #ffcc33;
+      color: #1e1e2c;
+      box-shadow: inset 0 -2px 0 #ffffff;
+      text-shadow: none;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #3c3c50;
+      color: #ffdd77;
+    }
+
+    /* 内容面板 */
+    .tab-content {
+      padding: 20px 16px;
+      min-height: 440px;
+      background: #181822;
+      font-size: 10px;
+      line-height: 1.8;
+      color: #d4d4dc;
+      text-align: left;
+    }
+
+    .content-pane {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .content-pane.active-pane {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* 游戏说明 (GAMEPLAY) 特殊样式 */
+    .gameplay-section p {
+      margin: 12px 0;
+      font-size: 9px;
+      line-height: 1.7;
+    }
+
+    .gameplay-section .welcome-quote {
+      background: #0a0a10;
+      padding: 14px;
+      border-left: 4px solid #ffcc66;
+      margin: 14px 0;
+      font-style: normal;
+    }
+
+    .gameplay-section .highlight-key {
+      color: #ffaa66;
+      background: #2a2a3a;
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .gameplay-section h3 {
+      font-size: 11px;
+      margin: 18px 0 10px 0;
+      color: #ffcc66;
+      border-left: 4px solid #ffcc66;
+      padding-left: 8px;
+    }
+
+    hr {
+      border-color: #333;
+      margin: 16px 0;
+    }
+
+    .extra-note {
+      background: #20202c;
+      padding: 12px;
+      margin-top: 16px;
+      border: 1px solid #ffaa44;
+      font-size: 8px;
+      text-align: center;
+    }
     
-    <!-- 引入像素风字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    .credits-text {
+      text-align: center;
+    }
     
-    <style>
-      /* 全局基础设置 */
-      body {
-        background-color: #1a1a1a; /* 复古暗色背景 */
-        color: #e0e0e0;
-        font-family: 'Press Start 2P', monospace; /* 应用像素字体 */
-        text-align: center;
-        margin: 0;
-        padding: 0;
-        display: flex;
+    .credits-text .big-name {
+      font-size: 11px;
+      color: #ffaa44;
+      margin: 18px 0 10px;
+      display: inline-block;
+      border-bottom: 2px dotted;
+    }
+    
+    .pixel-icon {
+      font-size: 16px;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    
+    .highlight {
+      color: #88ffaa;
+    }
+
+    /* 底部制作组信息 */
+    .footer {
+      margin-top: 50px;
+      font-size: 12px;
+      color: #aaaaaa;
+      line-height: 2;
+      text-shadow: 2px 2px 0px #000;
+      border-top: 2px solid #2c2c2c;
+      padding-top: 30px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* 全屏模式下底部隐藏 */
+    :-webkit-full-screen .footer {
+      display: none;
+    }
+    :fullscreen .footer {
+      display: none;
+    }
+    
+    .footer span.maker {
+      color: #44aaff;
+    }
+
+    /* 小屏幕适配 */
+    @media (max-width: 1080px) {
+      .game-row {
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        min-height: 100vh; /* 确保内容垂直居中 */
       }
+      .info-panel {
+        width: 90%;
+        max-width: 520px;
+      }
+      .game-wrapper {
+        margin: 0 auto;
+      }
+    }
 
-      /* 游戏名称区域（上方） */
-      .header {
-        margin-bottom: 35px; /* 稍微增加一点与游戏的间距 */
-      }
+    /* 滚动条 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      background: #222;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ffcc33;
+    }
+  </style>
+</head>
+<body>
+<div class="main-layout">
+  
+  <!-- 头部：游戏名称 + 双语切换按钮 -->
+  <div class="header">
+    <h1>WelcomeToTheDance</h1>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="langCnBtn">中文</button>
+      <button class="lang-btn" id="langEnBtn">EN</button>
+    </div>
+  </div>
 
-      h1 {
-        font-size: 40px; /* 【修改这里】字体改大了（原为28px） */
-        color: #ffcc00; 
-        text-shadow: 5px 5px 0px #000; /* 阴影也稍微加厚一点配合大字体 */
-        margin: 0;
-        letter-spacing: 2px;
-      }
-
-      /* 游戏容器，严格锁定Unity传入的宽高 */
-      #game-container {
-        position: relative;
-        width: 960px;
-        height: 540px;
-        background-color: #000;
-        border: 4px solid #fff; 
-        box-shadow: 8px 8px 0px #000; 
-      }
-
-      /* Canvas 严格锁定尺寸，不让其拉伸变形 */
-      canvas {
-        display: block;
-        width: 960px !important;
-        height: 540px !important;
-        image-rendering: pixelated; 
-      }
-
-      /* 制作者介绍区域（下方） */
-      .footer {
-        margin-top: 45px; /* 稍微增加一点与游戏的间距 */
-        font-size: 16px; /* 【修改这里】字体改大了（原为12px） */
-        color: #aaaaaa;
-        line-height: 2.2; /* 增加一点行距让大字不拥挤 */
-        text-shadow: 2px 2px 0px #000;
-      }
-
-      .footer span.maker {
-        color: #44aaff; 
-      }
-    </style>
-  </head>
-  <body>
-    <!-- 游戏上方：游戏名 -->
-    <div class="header">
-      <h1>WelcomeToTheDance</h1>
+  <!-- 游戏区域 + 右侧说明板块 -->
+  <div class="game-row">
+    <!-- Unity游戏主体 -->
+    <div class="game-wrapper">
+      <div id="game-container">
+        <!-- 全屏按钮位于游戏容器右上角 -->
+        <button class="fullscreen-btn" id="fullscreenBtn">⛶ FULLSCREEN</button>
+        <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+      </div>
     </div>
 
-    <!-- 游戏中间：固定分辨率的画布 -->
-    <div id="game-container">
-      <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+    <!-- 右侧说明板块: 切换 游戏说明(GAMEPLAY) / 额外说明(EXTRA) -->
+    <div class="info-panel">
+      <div class="tabs">
+        <button class="tab-btn active" id="tabGameplayBtn">🎭 假面舞会</button>
+        <button class="tab-btn" id="tabExtraBtn">✨ 制作札记</button>
+      </div>
+      <div class="tab-content">
+        <!-- 游戏说明内容容器（玩法+对话+操作） -->
+        <div id="gameplayPane" class="content-pane active-pane gameplay-section"></div>
+        <!-- 额外说明内容容器（GGJ2026 + WebGL提示） -->
+        <div id="extraPane" class="content-pane credits-text"></div>
+      </div>
     </div>
+  </div>
 
-    <!-- 游戏下方：制作者介绍 -->
-    <div class="footer">
-      <div>DEVELOPED BY <span class="maker">Jiayi Xu, Xinyu Zhao</span></div>
-      <div>v1.0</div>
-    </div>
+  <!-- 底部制作组信息（双语动态） -->
+  <div class="footer" id="footer">
+    <div id="footerLine1">DEVELOPED BY <span class="maker">Jiayi Xu, Xinyu Zhao</span></div>
+    <div id="footerLine2">v1.0 · 面具之下，暗流涌动</div>
+  </div>
+</div>
 
-    <!-- Unity WebGL 启动脚本 (兼容 Unity 2020+) -->
-    <script src="Build/Game2_WelcomeToTheDance.loader.js"></script>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
-      var buildUrl = "Build";
-      var config = {
-        dataUrl: buildUrl + "/Game2_WelcomeToTheDance.data.unityweb",
-        frameworkUrl: buildUrl + "/Game2_WelcomeToTheDance.framework.js.unityweb",
-        codeUrl: buildUrl + "/Game2_WelcomeToTheDance.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Jiayi Xu, Xinyu Zhao",
-        productName: "WelcomeToTheDance",
-        productVersion: "1.0",
-      };
+<!-- Unity WebGL 加载脚本 -->
+<script src="Build/Game2_WelcomeToTheDance.loader.js"></script>
+<script>
+  (function() {
+    // ==================== 全屏功能 ====================
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const gameContainer = document.getElementById('game-container');
+    
+    function toggleFullscreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const elem = gameContainer;
+        const requestMethod = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
+        if (requestMethod) {
+          requestMethod.call(elem);
+          fullscreenBtn.textContent = '✖ EXIT';
+        }
+      } else {
+        const exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (exitMethod) {
+          exitMethod.call(document);
+          fullscreenBtn.textContent = '⛶ FULLSCREEN';
+        }
+      }
+    }
+    
+    function onFullscreenChange() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        fullscreenBtn.textContent = '⛶ FULLSCREEN';
+      } else {
+        fullscreenBtn.textContent = '✖ EXIT';
+      }
+    }
+    
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    
+    // ==================== 双语文本库 (假面舞会剧情向 + 操作说明) ====================
+    const texts = {
+      zh: {
+        gameplay: {
+          welcomeTitle: "🎭 欢迎来到假面舞会！",
+          intro: "面对不同角色，伪装成对方认识的人，套出他们的秘密，在四方势力中斡旋，完成你的任务！",
+          controlsTitle: "🎮 操作方式",
+          controls: "• <span class='highlight-key'>E</span> 对话 / 互动\n• <span class='highlight-key'>空格 / 回车 / 鼠标左键</span> 确认选项\n• <span class='highlight-key'>V</span> 进入/退出 检视状态\n• <span class='highlight-key'>C</span> 进入/退出 签名检查\n• <span class='highlight-key'>J</span> 进入/退出 见闻记录",
+          tipNote: "💡 每位角色的秘密交织成网，你的选择将改变舞会的最终面具。"
+        },
+        extra: {
+          eventTitle: "GGJ 2026 参赛作品",
+          description: "本游戏为Global Game Jam 2026的参赛作品，专为Windows/Mac平台精心打造。",
+          webglNote: "⚠️ WebGL版本的UI可能存在未知显示bug，若遇界面错位请切换为<span class='highlight'>全屏模式(⛶ FULLSCREEN)</span>获得完整体验。",
+          thanks: "感谢每一位戴上假面的玩家！",
+          support: "开发：Jiayi Xu & Xinyu Zhao"
+        },
+        footer: {
+          line1: "DEVELOPED BY ",
+          line2: "v1.0 · 面具之下，暗流涌动"
+        },
+        tabGameplay: "🎭 假面舞会",
+        tabExtra: "✨ 感谢游玩"
+      },
+      en: {
+        gameplay: {
+          welcomeTitle: "🎭 Welcome to the Masquerade!",
+          intro: "Face different characters, pretend to be someone they know, extract their secrets, navigate between four factions, and accomplish your mission!",
+          controlsTitle: "🎮 Controls",
+          controls: "• <span class='highlight-key'>E</span> Talk / Interact\n• <span class='highlight-key'>SPACE / ENTER / Left Click</span> Confirm choices\n• <span class='highlight-key'>V</span> Enter/Exit Inspection Mode\n• <span class='highlight-key'>C</span> Enter/Exit Signature Check\n• <span class='highlight-key'>J</span> Enter/Exit Journal/Memo",
+          tipNote: "💡 Each character's secret weaves a dark web; your choices will reshape the final mask of the whole dance."
+        },
+        extra: {
+          eventTitle: "GGJ 2026 Entry",
+          description: "This game was created for Global Game Jam 2026, built specifically for Windows/Mac platforms.",
+          webglNote: "⚠️ The WebGL version may have unknown UI glitches. If you encounter layout issues, switch to <span class='highlight'>FULLSCREEN mode (⛶ FULLSCREEN)</span> for the best experience.",
+          thanks: "Thanks to all judges and every player who puts on a mask!",
+          support: "Dev: Jiayi Xu & Xinyu Zhao"
+        },
+        footer: {
+          line1: "DEVELOPED BY ",
+          line2: "v1.0 · Under the Mask, Secrets Stir."
+        },
+        tabGameplay: "🎭 MASQUERADE",
+        tabExtra: "✨ DEV NOTES"
+      }
+    };
 
+    let currentLang = 'zh';
+    let currentTab = 'gameplay';
+
+    const gameplayPane = document.getElementById('gameplayPane');
+    const extraPane = document.getElementById('extraPane');
+    const tabGameplayBtn = document.getElementById('tabGameplayBtn');
+    const tabExtraBtn = document.getElementById('tabExtraBtn');
+    const langCnBtn = document.getElementById('langCnBtn');
+    const langEnBtn = document.getElementById('langEnBtn');
+    const footerLine1 = document.getElementById('footerLine1');
+    const footerLine2 = document.getElementById('footerLine2');
+
+    // 渲染游戏说明 (假面舞会主题 + 操作)
+    function renderGameplay(lang) {
+      const t = texts[lang].gameplay;
+      const controlsFormatted = t.controls.replace(/\n/g, '<br>');
+      const introText = t.intro;
+      
+      const html = `
+        <div class="welcome-quote">
+        ${t.welcomeTitle}<br>
+          <span style="font-size:9px; display:inline-block; margin-top:6px;">✨ ${introText}</span>
+        </div>
+        <h3>${t.controlsTitle}</h3>
+        <p>${controlsFormatted}</p>
+        <hr>
+        <p style="font-size:8px; color:#bbb; margin-top:12px;">${t.tipNote}</p>
+      `;
+      gameplayPane.innerHTML = html;
+    }
+
+    // 渲染额外说明 (GGJ2026 + WebGL全屏提示)
+    function renderExtra(lang) {
+      const t = texts[lang].extra;
+      const html = `
+        <div class="pixel-icon"></div>
+        <div class="big-name">${t.eventTitle}</div>
+        <p>${t.description}</p>
+        <div class="extra-note">
+          ${t.webglNote}
+        </div>
+        <p style="margin-top: 22px;">❤️ ${t.thanks}</p>
+        <p style="margin-top: 10px; font-size: 8px;">${t.support}</p>
+        <hr style="width: 50%; margin: 18px auto;">
+        <p style="font-size: 7px;">🎭 戴上假面，操纵真相。</p>
+      `;
+      extraPane.innerHTML = html;
+    }
+
+    function renderFooter(lang) {
+      const t = texts[lang].footer;
+      footerLine1.innerHTML = `${t.line1}<span class="maker">Jiayi Xu, Xinyu Zhao</span>`;
+      footerLine2.innerHTML = t.line2;
+    }
+
+    function updateTabButtons(lang) {
+      const t = texts[lang];
+      tabGameplayBtn.innerHTML = t.tabGameplay;
+      tabExtraBtn.innerHTML = t.tabExtra;
+    }
+
+    function refreshUI() {
+      renderGameplay(currentLang);
+      renderExtra(currentLang);
+      renderFooter(currentLang);
+      updateTabButtons(currentLang);
+      
+      // 依据currentTab显示相应面板
+      if (currentTab === 'gameplay') {
+        gameplayPane.classList.add('active-pane');
+        extraPane.classList.remove('active-pane');
+        tabGameplayBtn.classList.add('active');
+        tabExtraBtn.classList.remove('active');
+      } else {
+        extraPane.classList.add('active-pane');
+        gameplayPane.classList.remove('active-pane');
+        tabExtraBtn.classList.add('active');
+        tabGameplayBtn.classList.remove('active');
+      }
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      if (lang === 'zh') {
+        langCnBtn.classList.add('active');
+        langEnBtn.classList.remove('active');
+      } else {
+        langEnBtn.classList.add('active');
+        langCnBtn.classList.remove('active');
+      }
+      refreshUI();
+    }
+
+    function setTab(tab) {
+      currentTab = tab;
+      if (tab === 'gameplay') {
+        gameplayPane.classList.add('active-pane');
+        extraPane.classList.remove('active-pane');
+        tabGameplayBtn.classList.add('active');
+        tabExtraBtn.classList.remove('active');
+      } else {
+        extraPane.classList.add('active-pane');
+        gameplayPane.classList.remove('active-pane');
+        tabExtraBtn.classList.add('active');
+        tabGameplayBtn.classList.remove('active');
+      }
+    }
+
+    langCnBtn.addEventListener('click', () => setLanguage('zh'));
+    langEnBtn.addEventListener('click', () => setLanguage('en'));
+    tabGameplayBtn.addEventListener('click', () => setTab('gameplay'));
+    tabExtraBtn.addEventListener('click', () => setTab('extra'));
+
+    // 初始化 (中文，游戏说明页)
+    renderGameplay('zh');
+    renderExtra('zh');
+    renderFooter('zh');
+    updateTabButtons('zh');
+    gameplayPane.classList.add('active-pane');
+    extraPane.classList.remove('active-pane');
+    tabGameplayBtn.classList.add('active');
+    tabExtraBtn.classList.remove('active');
+    currentLang = 'zh';
+    currentTab = 'gameplay';
+
+    // ==================== Unity 加载 (保持原有加载逻辑，适配Game2资源) ====================
+    var canvas = document.querySelector("#unity-canvas");
+    var buildUrl = "Build";
+    var config = {
+      dataUrl: buildUrl + "/Game2_WelcomeToTheDance.data.unityweb",
+      frameworkUrl: buildUrl + "/Game2_WelcomeToTheDance.framework.js.unityweb",
+      codeUrl: buildUrl + "/Game2_WelcomeToTheDance.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Jiayi Xu, Xinyu Zhao",
+      productName: "WelcomeToTheDance",
+      productVersion: "1.0",
+    };
+
+    // 避免重复加载脚本造成冲突
+    if (!window._unityLoaderAttachedGame2) {
+      window._unityLoaderAttachedGame2 = true;
       var script = document.createElement("script");
       script.src = config.frameworkUrl;
       script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-        }).then((unityInstance) => {
-          console.log("Game loaded successfully!");
-        }).catch((message) => {
-          alert(message);
-        });
+        // 检测createUnityInstance是否存在，兼容不同Unity加载器
+        if (typeof createUnityInstance !== 'undefined') {
+          createUnityInstance(canvas, config, (progress) => {}).then((unityInstance) => {
+            console.log("✅ WelcomeToTheDance 游戏加载成功！假面舞会，即刻开演。");
+            window.unityGameDance = unityInstance;
+            // 可选的Unity消息接口
+            try {
+              if (unityInstance.SendMessage) {
+                unityInstance.SendMessage('GameManager', 'OnWebUILoaded', 'ready');
+              }
+            } catch(e) { /* 静默忽略 */ }
+          }).catch((message) => {
+            console.error("Unity加载错误: ", message);
+            // 降级显示友好错误但不中断页面
+            const errorDiv = document.createElement('div');
+            errorDiv.style.position = 'absolute';
+            errorDiv.style.bottom = '10px';
+            errorDiv.style.left = '10px';
+            errorDiv.style.background = '#aa3333';
+            errorDiv.style.padding = '6px';
+            errorDiv.style.fontSize = '8px';
+            errorDiv.style.fontFamily = 'monospace';
+            errorDiv.innerText = '⚠️ Unity WebGL加载失败，请确认Build文件完整或刷新页面。';
+            canvas.parentNode.appendChild(errorDiv);
+          });
+        } else {
+          console.warn("createUnityInstance 未立即就绪，等待轮询");
+          let checkInterval = setInterval(() => {
+            if (typeof createUnityInstance !== 'undefined') {
+              clearInterval(checkInterval);
+              createUnityInstance(canvas, config, (progress) => {}).then((unityInstance) => {
+                window.unityGameDance = unityInstance;
+                console.log("✅ Unity延迟加载成功 (假面舞会)");
+              }).catch(console.error);
+            }
+          }, 200);
+          setTimeout(() => clearInterval(checkInterval), 12000);
+        }
       };
       document.body.appendChild(script);
-    </script>
-  </body>
+    } else {
+      // 若已经加载过loader但未实例化，尝试重新初始化
+      if (typeof createUnityInstance !== 'undefined' && !window.unityGameDance) {
+        createUnityInstance(canvas, config, (progress) => {}).then((unityInstance) => {
+          window.unityGameDance = unityInstance;
+          console.log("✅ Unity重新初始化成功 (WelcomeToTheDance)");
+        }).catch(console.error);
+      }
+    }
+  })();
+</script>
+</body>
 </html>
